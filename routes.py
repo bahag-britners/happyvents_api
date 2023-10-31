@@ -19,8 +19,17 @@ class EventList(Resource):
 
 class Event(Resource):
     def get(self, event_id):
-        return repo.event_get_by_id(event_id).__dict__
+        event = repo.event_get_by_id(event_id)
+        if event is None:
+            return {'error': 'Event not found'}, 404
+        return event.__dict__
     
+
+    def post(self):
+        data = request.get_json()
+        return repo.event_add(data).__dict__
+
+
     def put(self):
         data = request.get_json()
         return repo.event_update(data).__dict__

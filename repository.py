@@ -26,7 +26,9 @@ class Repository():
         return next((event for event in events if event.id == id), None)
     
     def event_add(self, data):
-        return Event(data['title'], data['description'], data['location'], 0, len(events) + 1)
+        new_event = Event(data['title'], data['description'], data['location'], 0, len(events) + 1)
+        events.append(new_event)
+        return new_event
     
     def event_update(self, data):
         event_to_update = next((event for event in events if event.id == id), None)
