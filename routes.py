@@ -1,4 +1,6 @@
 from flask_restful import Resource
+from repository import Repository as repo
+from flask import request
 
 
 class Health(Resource):
@@ -8,18 +10,20 @@ class Health(Resource):
 
 class EventList(Resource):
     def get(self):
-        return {'hello': 'from eventlist'}
+        return [e.__dict__ for e in repo.events_get_all()]
+    
+    def post(self):
+        data = request.get_json()
+        return repo.event_add(data).__dict__
 
 
 class Event(Resource):
     def get(self, event_id):
-        return {'hello': f'from event {event_id}'}
-    
-    def post(self):
-        return {'hello': 'from event (post)'}
+        return repo.event_get_by_id(event_id).__dict__
     
     def put(self):
-        return {'hello': 'from event (put)'}
+        data = request.get_json()
+        return repo.event_update(data).__dict__
     
     def delete(self, event_id):
-        return {'hello': f'from event {event_id}'}
+        return repo.event_delete(event_id)
