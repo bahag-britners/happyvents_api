@@ -1,8 +1,8 @@
 from flask_restful import Resource
-from repository import Repository as repo
+from repository import Repository
 from flask import request
 
-
+repo = Repository()
 class Health(Resource):
     def get(self):
         return {'hello': 'from hell'}
