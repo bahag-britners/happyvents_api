@@ -1,10 +1,12 @@
 from flask import Flask
 from flask_restful import Api
-from routes import EventList, Event, Health 
+from routes import EventList, Event, Health
+from flask_cors import CORS
 
 BASE_URL = '/api'
 
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
 
 api.add_resource(Health, f'{BASE_URL}')
