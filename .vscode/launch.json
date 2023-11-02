@@ -12,7 +12,7 @@
             "env": {
                 "FLASK_APP": "app.py",
                 "FLASK_ENV": "development",
-                "HOST": "127.0.0.1",
+                "HOST": "104.155.14.105",
                 "DATABASE": "happyvents",
                 "DB_PORT": "5432",
                 "USER": "postgres",
