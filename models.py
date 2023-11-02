@@ -21,16 +21,10 @@ class Comment:
 
 
 class EventLike:
-    def __init__(self, eventid, userid, commentid):
-        self.eventId = eventid
-        self.userId = userid
-        self.commentId = commentid
-
-    
-class CommentLike:
     def __init__(self, eventid, userid):
         self.eventId = eventid
         self.userId = userid
+
 
 
 class User:
