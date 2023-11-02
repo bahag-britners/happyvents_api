@@ -1,25 +1,47 @@
 from flask_restful import Resource
+from repository import Repository
+from flask import request
 
-
+repository = Repository()
 class Health(Resource):
     def get(self):
         return {'hello': 'from hell'}
     
 
 class EventList(Resource):
+    def __init__(self, repo=repository):
+        self.repo = repo
+
+
     def get(self):
-        return {'hello': 'from eventlist'}
+        return [e.__dict__ for e in self.repo.events_get_all()]
+    
+    def post(self):
+        data = request.get_json()
+        return self.repo.event_add(data).__dict__
 
 
 class Event(Resource):
+    def __init__(self, repo=repository):
+        self.repo = repo
+
+
     def get(self, event_id):
-        return {'hello': f'from event {event_id}'}
+        event = self.repo.event_get_by_id(event_id)
+        if event is None:
+            return {'error': 'Event not found'}, 404
+        return event.__dict__
     
+
     def post(self):
-        return {'hello': 'from event (post)'}
-    
+        data = request.get_json()
+        return self.repo.event_add(data).__dict__
+
+
     def put(self):
-        return {'hello': 'from event (put)'}
+        data = request.get_json()
+        return self.repo.event_update(data).__dict__
+    
     
     def delete(self, event_id):
-        return {'hello': f'from event {event_id}'}
+        return self.repo.event_delete(event_id)
