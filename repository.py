@@ -1,12 +1,12 @@
-from models import Event, Review, Like, User
+from models import Event, Comment, Like, User
 
 event1 = Event('Event 1', 'Description 1', 'Location 1', 0, 1)
 event2 = Event('Event 2', 'Description 2', 'Location 2', 0, 2)
 event3 = Event('Event 3', 'Description 3', 'Location 3', 0, 3)
 
-review1 = Review('Review 1', 1, 1)
-review2 = Review('Review 2', 1, 2)
-review3 = Review('Review 3', 2, 3)
+review1 = Comment('Review 1', 1, 1)
+review2 = Comment('Review 2', 1, 2)
+review3 = Comment('Review 3', 2, 3)
 
 user1 = User('User 1', 'Password 1', 'Email 1')
 user2 = User('User 2', 'Password 2', 'Email 2')
@@ -44,4 +44,4 @@ class Repository():
         return next((r for r in reviews if r.id == id), None)
     
     def review_add(self, data):
-        return Review(data['content'], data['eventId'], len(reviews) + 1)
+        return Comment(data['content'], data['eventId'], len(reviews) + 1)

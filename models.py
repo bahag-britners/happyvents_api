@@ -7,7 +7,7 @@ class Event:
         self.likes = likes
 
 
-class Review:
+class Comment:
     def __init__(self, content, event_id, id=-1):
         self.content = content
         self.eventId = event_id
