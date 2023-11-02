@@ -11,7 +11,15 @@
             "module": "flask",
             "env": {
                 "FLASK_APP": "app.py",
-                "FLASK_DEBUG": "1"
+                "FLASK_ENV": "development",
+                "HOST": "127.0.0.1",
+                "DATABASE": "happyvents",
+                "DB_PORT": "5432",
+                "USER": "postgres",
+                "PASSWORD": "happyvent_01",
+                "BASE_URL": "/api",
+                "MIN":"1",
+                "MAX":"5"
             },
             "args": [
                 "run",
