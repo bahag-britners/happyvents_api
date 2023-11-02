@@ -1,5 +1,5 @@
 class Event:
-    def __init__(self, title, description, address, image, event_data, likes, price, eventid=-1):
+    def __init__(self, eventid, title, description, address, image, event_data, likes, price):
         self.title = title
         self.eventid = eventid
         self.description = description
@@ -11,7 +11,7 @@ class Event:
 
 
 class Comment:
-    def __init__(self, content, eventid, userid, timestamp, likes, commentid=-1):
+    def __init__(self, commentid, eventid, userid, content, timestamp, likes):
         self.content = content
         self.eventid = eventid
         self.userid = userid
@@ -34,7 +34,7 @@ class CommentLike:
 
 
 class User:
-    def __init__(self, userid, user_password, email):
+    def __init__(self, userid, email, user_password):
         self.userid = userid
         self.user_password = user_password
         self.email = email
