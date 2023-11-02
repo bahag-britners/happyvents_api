@@ -26,6 +26,12 @@ class EventLike:
         self.userId = userid
 
 
+class CommentLike:
+    def __init__(self, eventid, userid, commentid):
+        self.eventId = eventid
+        self.userId = userid
+        self.commentId = commentid
+
 
 class User:
     def __init__(self, userid, user_password, email):
