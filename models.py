@@ -22,15 +22,15 @@ class Comment:
 
 class EventLike:
     def __init__(self, eventid, userid):
-        self.eventId = eventid
-        self.userId = userid
+        self.eventid = eventid
+        self.userid = userid
 
 
 class CommentLike:
     def __init__(self, eventid, userid, commentid):
-        self.eventId = eventid
-        self.userId = userid
-        self.commentId = commentid
+        self.eventid = eventid
+        self.userid = userid
+        self.commentid = commentid
 
 
 class User:
