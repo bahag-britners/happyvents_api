@@ -1,11 +1,11 @@
 class Event:
-    def __init__(self, eventid, title, description, address, image, event_data, likes, price):
+    def __init__(self, eventid, title, description, address, image, event_date, likes, price):
         self.title = title
         self.eventid = eventid
         self.description = description
         self.address = address
         self.image = image
-        self.event_data = event_data
+        self.event_date = event_date
         self.likes = likes
         self.price = price
 
