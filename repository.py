@@ -58,7 +58,7 @@ class Repository():
         conn = self.get_db()
         if conn:
             ps_cursor = conn.cursor()
-            event_id = data.get('eventid')
+            event_id = data.get('eventId')
             ps_cursor.execute("UPDATE events SET title= %s, description=%s, address=%s, event_date=%s, price=%s WHERE eventid = %s",
                             (data.get('title'), data.get('description'), data.get('address'), datetime.strptime(data.get('event_date'), "%Y-%m-%d"), data.get('price'), event_id))
             conn.commit()
