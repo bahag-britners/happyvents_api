@@ -11,7 +11,17 @@
             "module": "flask",
             "env": {
                 "FLASK_APP": "app.py",
-                "FLASK_DEBUG": "1"
+                "FLASK_ENV": "development",
+                "BASE_URL": "/api",
+                "HOST": "127.0.0.1",
+                "DATABASE": "bookreactions",
+                "DB_PORT": "5432",
+                "USER": "postgres",
+                "PASSWORD": "Horseismad1!",
+                "MIN": "1",
+                "MAX": "5",
+                "DEBUG": "True",
+                "PORT": "5000"
             },
             "args": [
                 "run",
