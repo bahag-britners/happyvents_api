@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, g
 from flask_restful import Api
 from routes import EventList, Event, Health
 from flask_cors import CORS
@@ -20,8 +20,8 @@ app = Flask(__name__)
 CORS(app)
 api = Api(app)
 
-app.config['pSQL_pool'] = pool.SimpleConnectionPool(MIN,
-    MAX,
+app.config['pSQL_pool'] = pool.SimpleConnectionPool(minconn=MIN,
+    maxconn=MAX,
     user=USER,
     password=PASSWORD,
     host=HOST,
