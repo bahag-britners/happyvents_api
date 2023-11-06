@@ -1,0 +1,40 @@
+class Event:
+    def __init__(self, eventId, title, description, address, image, event_date, likes, price):
+        self.title = title
+        self.eventId = eventId
+        self.description = description
+        self.address = address
+        self.image = image
+        self.event_date = event_date
+        self.likes = likes
+        self.price = price
+
+
+class Comment:
+    def __init__(self, commentId, eventId, userId, content, timestamp, likes):
+        self.content = content
+        self.eventId = eventId
+        self.userId = userId
+        self.timestamp = timestamp
+        self.commentId = commentId
+        self.likes = likes
+
+
+class EventLike:
+    def __init__(self, eventId, userId):
+        self.eventId = eventId
+        self.userId = userId
+
+
+class CommentLike:
+    def __init__(self, eventId, userId, commentId):
+        self.eventId = eventId
+        self.userId = userId
+        self.commentId = commentId
+
+
+class User:
+    def __init__(self, userId, email, user_password):
+        self.userId = userId
+        self.user_password = user_password
+        self.email = email
