@@ -1,8 +1,36 @@
 from models import Event, Comment, Like, User
+import datetime
 
-event1 = Event('Event 1', 'Description 1', 'Location 1', 0, 1)
-event2 = Event('Event 2', 'Description 2', 'Location 2', 0, 2)
-event3 = Event('Event 3', 'Description 3', 'Location 3', 0, 3)
+event1 = Event(
+    eventId=1, 
+    title='Event 1', 
+    description='Description 1', 
+    address='Address 1', 
+    image='', 
+    event_date=datetime.datetime(2023, 12, 25), 
+    likes=0, 
+    price=5
+)
+event2 = Event(
+    eventId=2, 
+    title='Event 2', 
+    description='Description 2', 
+    address='Address 2', 
+    image='', 
+    event_date=datetime.datetime(2023, 11, 25), 
+    likes=0, 
+    price=13.50
+)
+event3 = Event(
+    eventId=3, 
+    title='Event 3', 
+    description='Description 3', 
+    address='Address 3', 
+    image='', 
+    event_date='2023-11-24', 
+    likes=0, 
+    price=9.99
+)
 
 review1 = Comment('Review 1', 1, 1)
 review2 = Comment('Review 2', 1, 2)
