@@ -1,7 +1,7 @@
 
 from datetime import date
 from datetime import datetime
-from models import Event, Comment, EventLike, CommentLike, User
+from models import EventModel, CommentModel, EventLikeModel, CommentLikeModel, UserModel
 from flask import current_app, g
 
 
@@ -20,7 +20,7 @@ class Repository():
             #print(event_records)
             event_list = []
             for row in event_records:
-                event_list.append(Event(row[0], row[1], row[2], row[3], row[4],row[5].isoformat(),row[6],row[7]))
+                event_list.append(EventModel(row[0], row[1], row[2], row[3], row[4],row[5].isoformat(),row[6],row[7]))
             ps_cursor.close()
             return event_list
     
@@ -34,7 +34,7 @@ class Repository():
             ps_cursor.close()
         
         if event_record:
-            event = Event(event_record[0], event_record[1], event_record[2], event_record[3], event_record[4], event_record[5].isoformat(), event_record[6], event_record[7])
+            event = EventModel(event_record[0], event_record[1], event_record[2], event_record[3], event_record[4], event_record[5].isoformat(), event_record[6], event_record[7])
             return event
         else:
             return None
@@ -51,7 +51,7 @@ class Repository():
             conn.commit()
             id = ps_cursor.fetchone()[0]
             ps_cursor.close()
-            event = Event(id, data['title'], data['description'], data['address'], '', '', 0, 0)
+            event = EventModel(id, data['title'], data['description'], data['address'], '', '', 0, 0)
             return event
                             
     def event_update(self, data):
@@ -63,7 +63,7 @@ class Repository():
                             (data.get('title'), data.get('description'), data.get('address'), datetime.strptime(data.get('event_date'), "%Y-%m-%d"), data.get('price'), event_id))
             conn.commit()
             ps_cursor.close()
-            return Event(event_id, data['title'], data['description'], data['address'], data['image'], data['event_date'], data['likes'], data['price'])
+            return EventModel(event_id, data['title'], data['description'], data['address'], data['image'], data['event_date'], data['likes'], data['price'])
 
     def event_delete(self, id):
         conn = self.get_db()
