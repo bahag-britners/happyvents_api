@@ -1,4 +1,4 @@
-from models import Event
+from models import EventModel
 from flask import Flask
 import psycopg2
 from psycopg2 import pool
@@ -6,7 +6,7 @@ from repository import Repository
 from unittest.mock import MagicMock
 import datetime
 
-event1 = Event(
+event1 = EventModel(
     eventId=1, 
     title='Event 1', 
     description='Description 1', 
@@ -16,7 +16,7 @@ event1 = Event(
     likes=0, 
     price=5
 )
-event2 = Event(
+event2 = EventModel(
     eventId=2, 
     title='Event 2', 
     description='Description 2', 
@@ -27,7 +27,7 @@ event2 = Event(
     price=13.50
 )
 
-event3 = Event(
+event3 = EventModel(
     eventId=3, 
     title='Event 3', 
     description='Description 3', 
