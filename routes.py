@@ -16,9 +16,6 @@ class EventList(Resource):
     def get(self):
         return [e.__dict__ for e in self.repo.events_get_all()]
     
-    def post(self):
-        data = request.get_json()
-        return self.repo.event_add(data).__dict__
 
 
 class Event(Resource):
@@ -33,13 +30,13 @@ class Event(Resource):
         return event.__dict__
     
 
-    def post(self):
-        data = request.get_json()
+    def post(self, req=request):
+        data = req.get_json()
         return self.repo.event_add(data).__dict__
 
 
-    def put(self):
-        data = request.get_json()
+    def put(self, req=request):
+        data = req.get_json()
         return self.repo.event_update(data).__dict__
     
     
