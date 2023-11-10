@@ -34,7 +34,7 @@ class CommentLikeModel:
 
 
 class UserModel:
-    def __init__(self, userId, email, user_password):
+    def __init__(self, userId, userEmail, userImage):
         self.userId = userId
-        self.user_password = user_password
-        self.email = email
+        self.userEmail = userEmail
+        self.userImage = userImage
