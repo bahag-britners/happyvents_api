@@ -79,3 +79,21 @@ class Repository():
                 return f"Event with ID {id} deleted successfully"
             else:
                 return f"Event with ID {id} does not exist"
+    
+    def event_like_and_unlike(self, data):
+        conn = self.get_db()
+        if conn:
+            ps_cursor = conn.cursor()
+            ps_cursor.execute("SELECT eventid FROM event_like WHERE eventid = %s AND userid = %s", (data['eventId'], data['userId']))
+            liked_event = ps_cursor.fetchone()
+            if liked_event is None:
+                # like the event
+                ps_cursor.execute("INSERT INTO event_like(eventid, userid) VALUES (%s, %s)", (data['eventId'], data['userId']))
+                ps_cursor.execute("UPDATE events SET likes = likes + 1 WHERE eventid = %s", (data['eventId'],))
+
+            else:
+                # unlike the event
+                ps_cursor.execute("DELETE FROM event_like WHERE eventid = %s AND userid = %s", (data['eventId'], data['userId']))
+                ps_cursor.execute("UPDATE events SET likes = likes - 1 WHERE eventid = %s", (data['eventId'],))
+            conn.commit()
+            ps_cursor.close()
