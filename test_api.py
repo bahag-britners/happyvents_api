@@ -1,3 +1,4 @@
+import datetime
 from flask import request
 import routes
 from models import Event
@@ -9,9 +10,37 @@ import json
 from unittest.mock import MagicMock
 
 BASE_URL = '/api'
-event1 = Event('Event 1', 'Description 1', 'Location 1', 0, 1)
-event2 = Event('Event 2', 'Description 2', 'Location 2', 0, 2)
-event3 = Event('Event 3', 'Description 3', 'Location 3', 0, 3)
+event1 = Event(
+    eventId=1, 
+    title='Event 1', 
+    description='Description 1', 
+    address='Address 1', 
+    image='', 
+    event_date='2023-12-23',
+    likes=0, 
+    price=5
+)
+event2 = Event(
+    eventId=2, 
+    title='Event 2', 
+    description='Description 2', 
+    address='Address 2', 
+    image='', 
+    event_date='2023-11-25',
+    likes=0, 
+    price=13.50
+)
+event3 = Event(
+    eventId=3, 
+    title='Event 3', 
+    description='Description 3', 
+    address='Address 3', 
+    image='', 
+    event_date='2023-11-24', 
+    likes=0, 
+    price=9.99
+)
+events = [event1, event2, event3]
 
 class ApiTests(TestCase):
     @patch('routes.EventList.get')
@@ -23,19 +52,52 @@ class ApiTests(TestCase):
 
             assert response.status_code == 200
             events = json.loads(response.data)
-            assert events[0]['id'] == 1
+            assert events[0]['eventId'] == 1
+
+
+    @patch('routes.Event.get')
+    def test_event_get_by_id(self, test_patch):
+        with app.test_client() as client:
+            test_patch.return_value = event1.__dict__
+
+            response = client.get(f'{BASE_URL}/events/<event_id>')
+
+            assert response.status_code == 200
+            event = json.loads(response.data)
+            assert event['eventId'] == 1
+
+
+    @patch('routes.Event.put')
+    def test_event_update(self, test_patch):
+        with app.test_client() as client:
+            test_patch.return_value = event1.__dict__
+
+            response = client.put(f'{BASE_URL}/event')
+
+            assert response.status_code == 200
+            event = json.loads(response.data)
+            assert event['eventId'] == 1
+
+
+    @patch('routes.Event.delete')
+    def test_event_update(self, test_patch):
+        with app.test_client() as client:
+            test_patch.return_value = f"Event with ID {event1.eventId} deleted successfully"
+
+            response = client.delete(f'{BASE_URL}/event')
+
+            assert response.status_code == 200
+            res = json.loads(response.data)
+            assert res == f"Event with ID {event1.eventId} deleted successfully"
 
 
     @patch('routes.Event.post')
     def test_event_post(self, test_patch):
         with app.test_client() as client:
-            req = MagicMock(spec=request)
-            data = Event('Event 0', 'Description 0', 'Location 0', 0, 1)
-            req.json.return_value = data.__dict__
-            test_patch.return_value = req.json.return_value
+            test_patch.return_value = event1.__dict__
 
             response = client.post(f'{BASE_URL}/event')
 
             assert response.status_code == 200
-            events = json.loads(response.data)
-            assert events['id'] == 1
+            event = json.loads(response.data)
+            assert event['eventId'] == 1
