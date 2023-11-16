@@ -7,7 +7,14 @@ class Health(Resource):
     def get(self):
         return {'hello': 'from hell'}
     
+class EventListByTitle(Resource):
+    def __init__(self, repo=repository):
+        self.repo = repo
 
+    def get(self, title):
+        return [event.__dict__ for event 
+                in self.repo.events_get_by_title(title)]
+    
 class EventList(Resource):
     def __init__(self, repo=repository):
         self.repo = repo
