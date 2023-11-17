@@ -1,6 +1,6 @@
 from flask import Flask, g
 from flask_restful import Api
-from routes import EventList, Event, Health, EventListByTitle
+from routes import EventList, Event, Health, EventListByTitle, EventLike
 from flask_cors import CORS
 import os
 from psycopg2 import pool
@@ -32,6 +32,7 @@ api.add_resource(Health, f'{BASE_URL}')
 api.add_resource(Event, f'{BASE_URL}/event', f'{BASE_URL}/events/<event_id>')
 api.add_resource(EventList, f'{BASE_URL}/events')
 api.add_resource(EventListByTitle, f'{BASE_URL}/events/EventsByTitle/<title>')
+api.add_resource(EventLike, f'{BASE_URL}/events/like')
 
 @app.teardown_appcontext
 def close_conn(e):

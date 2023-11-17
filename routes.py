@@ -49,3 +49,13 @@ class Event(Resource):
     
     def delete(self, event_id):
         return self.repo.event_delete(event_id)
+    
+
+class EventLike(Resource):
+    def __init__(self, repo=repository):
+        self.repo = repo
+
+
+    def put(self, req=request):
+        data = req.get_json()
+        return self.repo.event_like_and_unlike(data)
