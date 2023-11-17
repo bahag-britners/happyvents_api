@@ -14,15 +14,30 @@ class EventListByTitle(Resource):
     def get(self, title):
         return [event.__dict__ for event 
                 in self.repo.events_get_by_title(title)]
-    
+
+
 class EventList(Resource):
     def __init__(self, repo=repository):
         self.repo = repo
 
-
     def get(self):
         return [e.__dict__ for e in self.repo.events_get_all()]
     
+
+class CreatedEventList(Resource):
+    def __init__(self, repo=repository):
+        self.repo = repo
+
+    def get(self, user_id):
+        return [e.__dict__ for e in self.repo.events_get_created(user_id)]
+    
+
+class LikedEventList(Resource):
+    def __init__(self, repo=repository):
+        self.repo = repo
+
+    def get(self, user_id):
+        return [e.__dict__ for e in self.repo.events_get_liked(user_id)]
 
 
 class Event(Resource):
