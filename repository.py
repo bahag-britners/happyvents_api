@@ -23,7 +23,38 @@ class Repository():
                 event_list.append(EventModel(row[0], row[1], row[2], row[3], row[4],row[5].isoformat(),row[6],row[7], row[8]))
             ps_cursor.close()
             return event_list
-    
+        
+    def events_get_created(self, userId):
+        conn = self.get_db()
+        if (conn):
+            ps_cursor = conn.cursor()
+            ps_cursor.execute("SELECT * FROM events WHERE userid = %s ORDER BY title", [userId,])
+            event_records = ps_cursor.fetchall()
+            event_list = []
+            for row in event_records:
+                event_list.append(EventModel(row[0], row[1], row[2], row[3], row[4],row[5].isoformat(),row[6],row[7], row[8]))
+            ps_cursor.close()
+            return event_list
+        
+    def events_get_liked(self, userId):
+        print(userId)
+        print(type(userId))
+        conn = self.get_db()
+        if (conn):
+            ps_cursor = conn.cursor()
+            ps_cursor.execute("SELECT eventid FROM event_like WHERE userid = %s", (userId,))
+            liked_event_records = ps_cursor.fetchall()
+            liked_events = []   
+            for row in liked_event_records:
+                liked_events.append(row[0])
+            ps_cursor.execute("SELECT * FROM events WHERE eventid = ANY(%s) ORDER BY title", [liked_events])
+            liked_event_records = ps_cursor.fetchall()
+            liked_events = [] 
+            for row in liked_event_records:
+                liked_events.append(EventModel(row[0], row[1], row[2], row[3], row[4],row[5].isoformat(),row[6],row[7], row[8]))
+            conn.commit()
+            ps_cursor.close()
+            return liked_events
     
     def event_get_by_id(self, id):
         conn = self.get_db()
