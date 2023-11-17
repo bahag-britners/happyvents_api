@@ -38,6 +38,19 @@ class Repository():
             return event
         else:
             return None
+    
+    def events_get_by_title(self, title):
+        conn = self.get_db()
+        if (conn):
+            ps_cursor = conn.cursor()
+            ps_cursor.execute(f"SELECT eventid, title, description, address, image, event_date, likes, price FROM events WHERE title ILIKE '{title}%%' ORDER BY title")
+            event_records = ps_cursor.fetchall()
+            #print(event_records)
+            event_list = []
+            for row in event_records:
+                event_list.append(EventModel(row[0], row[1], row[2], row[3], row[4],row[5].isoformat(),row[6],row[7]))
+            ps_cursor.close()
+            return event_list
             
     # need to test after adding the event
     def event_add(self, data):
