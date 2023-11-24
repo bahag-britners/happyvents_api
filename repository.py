@@ -28,7 +28,7 @@ class Repository():
         conn = self.get_db()
         if (conn):
             ps_cursor = conn.cursor()
-            ps_cursor.execute("SELECT * FROM events WHERE userid = %s ORDER BY title", [userId,])
+            ps_cursor.execute("SELECT * FROM events WHERE userid = %s ORDER BY title", (userId,))
             event_records = ps_cursor.fetchall()
             event_list = []
             for row in event_records:
