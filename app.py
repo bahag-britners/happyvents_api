@@ -32,7 +32,7 @@ api.add_resource(Health, f'{BASE_URL}')
 api.add_resource(Event, f'{BASE_URL}/event', f'{BASE_URL}/events/<event_id>')
 api.add_resource(LikedEventList, f'{BASE_URL}/events/liked/<user_id>')
 api.add_resource(CreatedEventList, f'{BASE_URL}/events/created/<user_id>')
-api.add_resource(EventListByTitle, f'{BASE_URL}/events/EventsByTitle/<title>')
+api.add_resource(EventListByTitle, f'{BASE_URL}/events/eventsbytitle/<title>')
 api.add_resource(EventList, f'{BASE_URL}/events')
 api.add_resource(EventLike, f'{BASE_URL}/events/like')
 

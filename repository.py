@@ -74,12 +74,12 @@ class Repository():
         conn = self.get_db()
         if (conn):
             ps_cursor = conn.cursor()
-            ps_cursor.execute(f"SELECT eventid, title, description, address, image, event_date, likes, price FROM events WHERE title ILIKE '{title}%%' ORDER BY title")
+            ps_cursor.execute("SELECT * FROM events WHERE title ILIKE %s ORDER BY title", ('%' + title + '%',))
             event_records = ps_cursor.fetchall()
             #print(event_records)
             event_list = []
             for row in event_records:
-                event_list.append(EventModel(row[0], row[1], row[2], row[3], row[4],row[5].isoformat(),row[6],row[7]))
+                event_list.append(EventModel(row[0], row[1], row[2], row[3], row[4],row[5].isoformat(),row[6],row[7], row[8]))
             ps_cursor.close()
             return event_list
             
