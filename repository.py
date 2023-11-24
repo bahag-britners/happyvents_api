@@ -144,3 +144,19 @@ class Repository():
                 conn.commit()
                 ps_cursor.close()
                 return f"Event is unliked successfully"
+    
+    def user_add(self, user):
+        conn = self.get_db()
+        if (conn):
+            ps_cursor = conn.cursor()
+            ps_cursor.execute("SELECT * FROM users WHERE userid = %s", (user['userId'],))
+            user_exists = ps_cursor.fetchone()
+            if user_exists:
+                return "User already exists"
+            else:
+                ps_cursor.execute(
+                    "INSERT INTO users(userid, user_email, user_image, user_name) VALUES (%s, %s, %s, %s)",
+                    (user['userId'], user['userEmail'], user['userImage'], user['userName']))
+            conn.commit()
+            ps_cursor.close()
+            return "User added successfully"

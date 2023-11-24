@@ -56,11 +56,11 @@ class Event(Resource):
 
     def post(self, req=request):
         data = req.get_json()
-        user_id = retrieve_user(req)
-        if user_id is None:
+        user = retrieve_user(req)
+        if user is None:
             return {'error': 'Unauthorized'}, 401
         else:
-            return self.repo.event_add(data, user_id).__dict__
+            return self.repo.event_add(data, user.userId).__dict__
 
 
     def put(self, req=request):
@@ -80,3 +80,14 @@ class EventLike(Resource):
     def put(self, req=request):
         data = req.get_json()
         return self.repo.event_like_and_unlike(data)
+
+class Users(Resource):
+    def __init__(self, repo=repository):
+        self.repo = repo
+
+    def post(self, req=request):
+        user = retrieve_user(req)
+        if user is None:
+            return {'error': 'Unauthorized'}, 401
+        else:
+            return self.repo.users_add(users).__dict__

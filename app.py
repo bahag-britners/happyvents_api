@@ -35,6 +35,7 @@ api.add_resource(CreatedEventList, f'{BASE_URL}/events/created')
 api.add_resource(EventListByTitle, f'{BASE_URL}/events/eventsbytitle/<title>')
 api.add_resource(EventList, f'{BASE_URL}/events')
 api.add_resource(EventLike, f'{BASE_URL}/events/like')
+api.add_resource(Users, f'{BASE_URL}/users')
 
 @app.teardown_appcontext
 def close_conn(e):
