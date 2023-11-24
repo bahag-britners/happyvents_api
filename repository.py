@@ -117,37 +117,37 @@ class Repository():
                 ps_cursor.close()
                 return EventModel(event_id, data['title'], data['description'], data['address'], data['image'], data['event_date'], data['likes'], data['price'])
 
-    def event_delete(self, id):
+    def event_delete(self, eventId, userId):
         conn = self.get_db()
         if conn:
             ps_cursor = conn.cursor()
-            ps_cursor.execute("SELECT eventid FROM events WHERE eventid = %s", (id,))
-            existing_event = ps_cursor.fetchone()
+            ps_cursor.execute("SELECT userid FROM events WHERE eventid = %s", (eventId,))
+            event_creator_id = ps_cursor.fetchone()
 
-            if existing_event:
-                ps_cursor.execute("DELETE FROM events WHERE eventid = %s", (id,))
+            if event_creator_id is not None and event_creator_id[0] == userId:
+                ps_cursor.execute("DELETE FROM events WHERE eventid = %s", (eventId,))
                 conn.commit()
                 ps_cursor.close()
-                return f"Event with ID {id} deleted successfully"
+                return f"Event with ID {eventId} deleted successfully"
             else:
-                return f"Event with ID {id} does not exist"
+                return f"Event with ID {eventId} cannot be deleted because you are not the creator"
     
-    def event_like_and_unlike(self, data):
+    def event_like_and_unlike(self, data, userId):
         conn = self.get_db()
         if conn:
             ps_cursor = conn.cursor()
-            ps_cursor.execute("SELECT eventid FROM event_like WHERE eventid = %s AND userid = %s", (data['eventId'], data['userId']))
+            ps_cursor.execute("SELECT eventid FROM event_like WHERE eventid = %s AND userid = %s", (data['eventId'], userId))
             liked_event = ps_cursor.fetchone()
             if liked_event is None:
                 # like the event
-                ps_cursor.execute("INSERT INTO event_like(eventid, userid) VALUES (%s, %s)", (data['eventId'], data['userId']))
+                ps_cursor.execute("INSERT INTO event_like(eventid, userid) VALUES (%s, %s)", (data['eventId'], userId))
                 ps_cursor.execute("UPDATE events SET likes = likes + 1 WHERE eventid = %s", (data['eventId'],))
                 conn.commit()
                 ps_cursor.close()
                 return f"Event is liked successfully"
             else:
                 # unlike the event
-                ps_cursor.execute("DELETE FROM event_like WHERE eventid = %s AND userid = %s", (data['eventId'], data['userId']))
+                ps_cursor.execute("DELETE FROM event_like WHERE eventid = %s AND userid = %s", (data['eventId'], userId))
                 ps_cursor.execute("UPDATE events SET likes = likes - 1 WHERE eventid = %s", (data['eventId'],))
                 conn.commit()
                 ps_cursor.close()

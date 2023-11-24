@@ -90,7 +90,7 @@ class Event(Resource):
         if user is None:
             return {'error': 'Unauthorized'}, 401
         else:
-            return self.repo.event_delete(event_id)
+            return self.repo.event_delete(event_id, user.userId)
     
 
 class EventLike(Resource):
@@ -103,7 +103,7 @@ class EventLike(Resource):
         if user is None:
             return {'error': 'Unauthorized'}, 401
         else:
-            return self.repo.event_like_and_unlike(data)
+            return self.repo.event_like_and_unlike(data, user.userId)
 
 class Users(Resource):
     def __init__(self, repo=repository):
