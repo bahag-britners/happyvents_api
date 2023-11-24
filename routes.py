@@ -2,6 +2,8 @@ from flask_restful import Resource
 from repository import Repository
 from flask import request
 
+from verify_token import retrieve_user
+
 repository = Repository()
 class Health(Resource):
     def get(self):
@@ -54,7 +56,11 @@ class Event(Resource):
 
     def post(self, req=request):
         data = req.get_json()
-        return self.repo.event_add(data).__dict__
+        user_id = retrieve_user(req)
+        if user_id is None:
+            return {'error': 'Unauthorized'}, 401
+        else:
+            return self.repo.event_add(data, user_id).__dict__
 
 
     def put(self, req=request):
