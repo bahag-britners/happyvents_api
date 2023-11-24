@@ -98,16 +98,22 @@ class Repository():
             event = EventModel(id, data['title'], data['description'], data['address'], '', data['event_date'], 0, data['price'], userId)
             return event
                             
-    def event_update(self, data):
+    def event_update(self, data, userId):
         conn = self.get_db()
         if conn:
             ps_cursor = conn.cursor()
             event_id = data.get('eventId')
-            ps_cursor.execute("UPDATE events SET title= %s, description=%s, address=%s, event_date=%s, price=%s WHERE eventid = %s",
+            ps_cursor.execute("SELECT userid FROM events WHERE eventid = %s", (event_id,))
+            event_creator_id = ps_cursor.fetchone()[0]
+            if event_creator_id != userId:
+                ps_cursor.close()
+                return {'error': 'You are not allowed to do this!'}, 401
+            else:
+                ps_cursor.execute("UPDATE events SET title= %s, description=%s, address=%s, event_date=%s, price=%s WHERE eventid = %s",
                             (data.get('title'), data.get('description'), data.get('address'), datetime.strptime(data.get('event_date'), "%Y-%m-%d"), data.get('price'), event_id))
-            conn.commit()
-            ps_cursor.close()
-            return EventModel(event_id, data['title'], data['description'], data['address'], data['image'], data['event_date'], data['likes'], data['price'], data['userId'])
+                conn.commit()
+                ps_cursor.close()
+                return EventModel(event_id, data['title'], data['description'], data['address'], data['image'], data['event_date'], data['likes'], data['price'], userId)
 
     def event_delete(self, id):
         conn = self.get_db()
