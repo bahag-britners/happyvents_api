@@ -95,7 +95,7 @@ class Repository():
             conn.commit()
             id = ps_cursor.fetchone()[0]
             ps_cursor.close()
-            event = EventModel(id, data['title'], data['description'], data['address'], '', data['event_date'], 0, data['price'], userId)
+            event = EventModel(id, data['title'], data['description'], data['address'], '', data['event_date'], 0, data['price'])
             return event
                             
     def event_update(self, data, userId):
@@ -105,6 +105,8 @@ class Repository():
             event_id = data.get('eventId')
             ps_cursor.execute("SELECT userid FROM events WHERE eventid = %s", (event_id,))
             event_creator_id = ps_cursor.fetchone()[0]
+            print("event creator id: " + event_creator_id)
+            print("userId: " + userId)
             if event_creator_id != userId:
                 ps_cursor.close()
                 return {'error': 'You are not allowed to do this!'}, 401
@@ -113,7 +115,7 @@ class Repository():
                             (data.get('title'), data.get('description'), data.get('address'), datetime.strptime(data.get('event_date'), "%Y-%m-%d"), data.get('price'), event_id))
                 conn.commit()
                 ps_cursor.close()
-                return EventModel(event_id, data['title'], data['description'], data['address'], data['image'], data['event_date'], data['likes'], data['price'], userId)
+                return EventModel(event_id, data['title'], data['description'], data['address'], data['image'], data['event_date'], data['likes'], data['price'])
 
     def event_delete(self, id):
         conn = self.get_db()
@@ -155,14 +157,14 @@ class Repository():
         conn = self.get_db()
         if (conn):
             ps_cursor = conn.cursor()
-            ps_cursor.execute("SELECT * FROM users WHERE userid = %s", (user['userId'],))
+            ps_cursor.execute("SELECT * FROM users WHERE userid = %s", (user.userId,))
             user_exists = ps_cursor.fetchone()
             if user_exists:
                 return "User already exists"
             else:
                 ps_cursor.execute(
                     "INSERT INTO users(userid, user_email, user_image, user_name) VALUES (%s, %s, %s, %s)",
-                    (user['userId'], user['userEmail'], user['userImage'], user['userName']))
+                    (user.userId, user.userEmail, user.userImage, user.userName))
             conn.commit()
             ps_cursor.close()
             return "User added successfully"

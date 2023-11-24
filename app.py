@@ -1,6 +1,6 @@
 from flask import Flask, g
 from flask_restful import Api
-from routes import EventList, Event, Health, EventListByTitle, EventLike, CreatedEventList, LikedEventList
+from routes import EventList, Event, Health, EventListByTitle, EventLike, CreatedEventList, LikedEventList, Users
 from flask_cors import CORS
 import os
 from psycopg2 import pool

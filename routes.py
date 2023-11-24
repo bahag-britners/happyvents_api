@@ -79,7 +79,7 @@ class Event(Resource):
             return {'error': 'Unauthorized'}, 401
         else:
             val = self.repo.event_update(data, user.userId)
-            if val is EventModel:
+            if isinstance(val, EventModel):
                 return val.__dict__
             else:
                 return val
@@ -114,4 +114,4 @@ class Users(Resource):
         if user is None:
             return {'error': 'Unauthorized'}, 401
         else:
-            return self.repo.users_add(users).__dict__
+            return self.repo.user_add(user)
