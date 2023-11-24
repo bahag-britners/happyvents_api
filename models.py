@@ -1,5 +1,5 @@
 class EventModel:
-    def __init__(self, eventId, title, description, address, image, event_date, likes, price, userId):
+    def __init__(self, eventId, title, description, address, image, event_date, likes, price, userId = "user_id"):
         self.title = title
         self.eventId = eventId
         self.description = description
