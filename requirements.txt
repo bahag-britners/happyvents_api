@@ -3,3 +3,4 @@ flask_cors
 pytest
 werkzeug==2.0.2
 psycopg2-binary
+firebase-admin

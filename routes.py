@@ -1,6 +1,9 @@
 from flask_restful import Resource
+from models import EventModel
 from repository import Repository
 from flask import request
+
+from verify_token import retrieve_user
 
 repository = Repository()
 class Health(Resource):
@@ -28,16 +31,24 @@ class CreatedEventList(Resource):
     def __init__(self, repo=repository):
         self.repo = repo
 
-    def get(self, user_id):
-        return [e.__dict__ for e in self.repo.events_get_created(user_id)]
+    def get(self, req=request):
+        user = retrieve_user(req)
+        if user is None:
+            return {'error': 'Unauthorized'}, 401
+        else:
+            return [e.__dict__ for e in self.repo.events_get_created(user.userId)]
     
 
 class LikedEventList(Resource):
     def __init__(self, repo=repository):
         self.repo = repo
 
-    def get(self, user_id):
-        return [e.__dict__ for e in self.repo.events_get_liked(user_id)]
+    def get(self, req=request):
+        user = retrieve_user(req)
+        if user is None:
+            return {'error': 'Unauthorized'}, 401
+        else:
+            return [e.__dict__ for e in self.repo.events_get_liked(user.userId)]
 
 
 class Event(Resource):
@@ -54,23 +65,53 @@ class Event(Resource):
 
     def post(self, req=request):
         data = req.get_json()
-        return self.repo.event_add(data).__dict__
+        user = retrieve_user(req)
+        if user is None:
+            return {'error': 'Unauthorized'}, 401
+        else:
+            return self.repo.event_add(data, user.userId).__dict__
 
 
     def put(self, req=request):
         data = req.get_json()
-        return self.repo.event_update(data).__dict__
+        user = retrieve_user(req)
+        if user is None:
+            return {'error': 'Unauthorized'}, 401
+        else:
+            val = self.repo.event_update(data, user.userId)
+            if isinstance(val, EventModel):
+                return val.__dict__
+            else:
+                return val
     
     
-    def delete(self, event_id):
-        return self.repo.event_delete(event_id)
+    def delete(self, event_id, req=request):
+        user = retrieve_user(req)
+        if user is None:
+            return {'error': 'Unauthorized'}, 401
+        else:
+            return self.repo.event_delete(event_id, user.userId)
     
 
 class EventLike(Resource):
     def __init__(self, repo=repository):
         self.repo = repo
 
-
     def put(self, req=request):
         data = req.get_json()
-        return self.repo.event_like_and_unlike(data)
+        user = retrieve_user(req)
+        if user is None:
+            return {'error': 'Unauthorized'}, 401
+        else:
+            return self.repo.event_like_and_unlike(data, user.userId)
+
+class Users(Resource):
+    def __init__(self, repo=repository):
+        self.repo = repo
+
+    def post(self, req=request):
+        user = retrieve_user(req)
+        if user is None:
+            return {'error': 'Unauthorized'}, 401
+        else:
+            return self.repo.user_add(user)

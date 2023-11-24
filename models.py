@@ -1,5 +1,5 @@
 class EventModel:
-    def __init__(self, eventId, title, description, address, image, event_date, likes, price, userId):
+    def __init__(self, eventId, title, description, address, image, event_date, likes, price, userId = "user_id"):
         self.title = title
         self.eventId = eventId
         self.description = description
@@ -35,7 +35,8 @@ class CommentLikeModel:
 
 
 class UserModel:
-    def __init__(self, userId, userEmail, userImage):
+    def __init__(self, userId, userEmail, userImage, userName):
         self.userId = userId
         self.userEmail = userEmail
         self.userImage = userImage
+        self.userName = userName
