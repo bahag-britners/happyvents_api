@@ -1,6 +1,6 @@
 from flask import Flask, g
 from flask_restful import Api
-from routes import EventList, Event, Health
+from routes import EventList, Event, Health, EventListByTitle, EventLike, CreatedEventList, LikedEventList
 from flask_cors import CORS
 import os
 from psycopg2 import pool
@@ -14,7 +14,7 @@ PASSWORD = os.environ.get("PASSWORD") #os.environ.get("PASSWORD")
 # env_var = dict(os.environ)
 MIN = os.environ.get("MIN")
 MAX = os.environ.get("MAX")
-DEBUG = os.environ.get("DEBUG")
+
 
 app = Flask(__name__)
 CORS(app)
@@ -30,7 +30,11 @@ app.config['pSQL_pool'] = pool.SimpleConnectionPool(minconn=MIN,
 
 api.add_resource(Health, f'{BASE_URL}')
 api.add_resource(Event, f'{BASE_URL}/event', f'{BASE_URL}/events/<event_id>')
+api.add_resource(LikedEventList, f'{BASE_URL}/events/liked/<user_id>')
+api.add_resource(CreatedEventList, f'{BASE_URL}/events/created/<user_id>')
+api.add_resource(EventListByTitle, f'{BASE_URL}/events/eventsbytitle/<title>')
 api.add_resource(EventList, f'{BASE_URL}/events')
+api.add_resource(EventLike, f'{BASE_URL}/events/like')
 
 @app.teardown_appcontext
 def close_conn(e):
@@ -40,4 +44,4 @@ def close_conn(e):
         print('released connection back to pool')
 
 if __name__ == '__main__':
-    app.run(debug=DEBUG)
+    app.run(debug=True)
