@@ -168,3 +168,15 @@ class Repository():
             conn.commit()
             ps_cursor.close()
             return "User added successfully"
+
+    def comments_get_all(self, eventId):
+        conn = self.get_db()
+        if (conn):
+            ps_cursor = conn.cursor()
+            ps_cursor.execute("SELECT * FROM comments WHERE eventid = %s ORDER BY timestamp", (eventId,))
+            comment_records = ps_cursor.fetchall()
+            comment_list = []
+            for row in comment_records:
+                comment_list.append(CommentModel(row[0], row[1], row[2], row[3].isoformat(), row[4], row[5]))
+            ps_cursor.close()
+            return comment_list

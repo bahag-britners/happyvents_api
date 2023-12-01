@@ -115,3 +115,11 @@ class Users(Resource):
             return {'error': 'Unauthorized'}, 401
         else:
             return self.repo.user_add(user)
+
+class Comment(Resource):
+    def __init__(self, repo=repository):
+        self.repo = repo
+    
+    def get(self):
+        return [c.__dict__ for c in self.repo.comments_get_all()]
+        
