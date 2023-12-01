@@ -180,3 +180,58 @@ class Repository():
                 comment_list.append(CommentModel(row[0], row[1], row[2], row[3].isoformat(), row[4], row[5]))
             ps_cursor.close()
             return comment_list
+
+    def comment_add(self, eventId, data, userId):
+        conn = self.get_db()
+        if (conn):
+            ps_cursor = conn.cursor()
+            timestamp = datetime.now()
+            ps_cursor.execute(
+                "INSERT INTO comments(eventid, content, timestamp, userid) VALUES (%s, %s, %s, %s) RETURNING commentid",
+                (eventId, data['content'], timestamp, userId))
+            conn.commit()
+            comment_id = ps_cursor.fetchone()[0]
+            ps_cursor.execute("SELECT user_name FROM users WHERE userid = %s", (userId,))
+            user_name = ps_cursor.fetchone()[0]
+            ps_cursor.close()
+            comment = CommentModel(comment_id, eventId, data['content'], timestamp, user_name)
+            return comment
+
+        def comment_delete(self, commentId, userId):
+            conn = self.get_db()
+            if conn:
+                ps_cursor = conn.cursor()
+                ps_cursor.execute("SELECT userid FROM comments WHERE commentid = %s", (commentId,))
+                comment_creator_id = ps_cursor.fetchone()
+
+                if comment_creator_id is not None and comment_creator_id[0] == userId:
+                    ps_cursor.execute("DELETE FROM comments WHERE commentid = %s", (commentId,))
+                    conn.commit()
+                    ps_cursor.close()
+                    return f"Comment with ID {commentId} deleted successfully"
+                else:
+                    return f"Comment with ID {commentId} cannot be deleted because you are not the creator"
+
+        def comment_like_and_unlike(self, eventId, data, userId):
+            conn = self.get_db()
+            if conn:
+                ps_cursor = conn.cursor()
+                ps_cursor.execute("SELECT commentid FROM comment_like WHERE commentid = %s AND userid = %s",
+                                  (data['commentId'], userId))
+                liked_comment = ps_cursor.fetchone()
+                if liked_comment is None:
+                    # like the comment
+                    ps_cursor.execute("INSERT INTO comment_like(eventid, commentid, userid) VALUES (%s, %s, %s)",
+                                      (eventId, data['commentId'], userId))
+                    ps_cursor.execute("UPDATE comments SET likes = likes + 1 WHERE commentid = %s", (data['commentId'],))
+                    conn.commit()
+                    ps_cursor.close()
+                    return f"Comment is liked successfully"
+                else:
+                    # unlike the comment
+                    ps_cursor.execute("DELETE FROM comment_like WHERE commentid = %s AND userid = %s",
+                                      (data['commentId'], userId))
+                    ps_cursor.execute("UPDATE comments SET likes = likes - 1 WHERE commentid = %s", (data['commentId'],))
+                    conn.commit()
+                    ps_cursor.close()
+                    return f"Comment is unliked successfully"

@@ -120,6 +120,33 @@ class Comment(Resource):
     def __init__(self, repo=repository):
         self.repo = repo
     
-    def get(self):
-        return [c.__dict__ for c in self.repo.comments_get_all()]
+    def get(self, event_id):
+        return [c.__dict__ for c in self.repo.comments_get_all(event_id)]
+
+    def post(self, event_id, req=request):
+        data = req.get_json()
+        user = retrieve_user(req)
+        if user is None:
+            return {'error': 'Unauthorized'}, 401
+        else:
+            return self.repo.comment_add(event_id, data, user.userId)
+
+    def delete(self, comment_id, req=request):
+        user = retrieve_user(req)
+        if user is None:
+            return {'error': 'Unauthorized'}, 401
+        else:
+            return self.repo.comment_delete(comment_id, user.userId)
+
+class CommentLike(Resource):
+    def __init__(self, repo=repository):
+        self.repo = repo
+
+    def put(self, event_id, req=request):
+        data = req.get_json()
+        user = retrieve_user(req)
+        if user is None:
+            return {'error': 'Unauthorized'}, 401
+        else:
+            return self.repo.comment_like_and_unlike(event_id, data, user.userId)
         
