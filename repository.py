@@ -173,7 +173,7 @@ class Repository():
         conn = self.get_db()
         if (conn):
             ps_cursor = conn.cursor()
-            ps_cursor.execute("SELECT * FROM comments WHERE eventid = %s ORDER BY timestamp", (eventId,))
+            ps_cursor.execute("SELECT * FROM user_comments WHERE eventid = %s ORDER BY timestamp", (eventId,))
             comment_records = ps_cursor.fetchall()
             comment_list = []
             for row in comment_records:
@@ -187,7 +187,7 @@ class Repository():
             ps_cursor = conn.cursor()
             timestamp = datetime.now()
             ps_cursor.execute(
-                "INSERT INTO comments(eventid, content, timestamp, userid) VALUES (%s, %s, %s, %s) RETURNING commentid",
+                "INSERT INTO user_comments(eventid, content, timestamp, userid) VALUES (%s, %s, %s, %s) RETURNING commentid",
                 (eventId, data['content'], timestamp, userId))
             conn.commit()
             comment_id = ps_cursor.fetchone()[0]
