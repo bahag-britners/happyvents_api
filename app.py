@@ -36,7 +36,7 @@ api.add_resource(EventListByTitle, f'{BASE_URL}/events/eventsbytitle/<title>')
 api.add_resource(EventList, f'{BASE_URL}/events')
 api.add_resource(EventLike, f'{BASE_URL}/events/like')
 api.add_resource(Users, f'{BASE_URL}/users')
-api.add_resource(Comment, f'{BASE_URL}/comments<event_id>', f'{BASE_URL}/comments/<comment_id>')
+api.add_resource(Comment, f'{BASE_URL}/comments/<event_id>', f'{BASE_URL}/comments/<comment_id>')
 api.add_resource(CommentLike, f'{BASE_URL}/comments/like<event_id>')
 
 @app.teardown_appcontext
