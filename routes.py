@@ -129,7 +129,7 @@ class Comment(Resource):
         if user is None:
             return {'error': 'Unauthorized'}, 401
         else:
-            return self.repo.comment_add(event_id, data, user.userId)
+            return self.repo.comment_add(event_id, data, user.userId).__dict__
 
     def delete(self, comment_id, req=request):
         user = retrieve_user(req)

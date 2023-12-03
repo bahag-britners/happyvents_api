@@ -187,25 +187,23 @@ class Repository():
             ps_cursor = conn.cursor()
             timestamp = datetime.now()
             ps_cursor.execute(
-                "INSERT INTO user_comments(eventid, content, timestamp, userid) VALUES (%s, %s, %s, %s) RETURNING commentid",
-                (eventId, data['content'], timestamp, userId))
+                "INSERT INTO user_comments(eventid, content, timestamp, userid, likes) VALUES (%s, %s, %s, %s, %s) RETURNING commentid",
+                (eventId, data['content'], timestamp, userId, 0))
             conn.commit()
             comment_id = ps_cursor.fetchone()[0]
-            ps_cursor.execute("SELECT user_name FROM users WHERE userid = %s", (userId,))
-            user_name = ps_cursor.fetchone()[0]
             ps_cursor.close()
-            comment = CommentModel(comment_id, eventId, data['content'], timestamp, user_name)
+            comment = CommentModel(comment_id, eventId, data['content'], timestamp.isoformat(), userId, 0)
             return comment
 
     def comment_delete(self, commentId, userId):
         conn = self.get_db()
         if conn:
             ps_cursor = conn.cursor()
-            ps_cursor.execute("SELECT userid FROM comments WHERE commentid = %s", (commentId,))
+            ps_cursor.execute("SELECT userid FROM user_comments WHERE commentid = %s", (commentId,))
             comment_creator_id = ps_cursor.fetchone()
 
             if comment_creator_id is not None and comment_creator_id[0] == userId:
-                ps_cursor.execute("DELETE FROM comments WHERE commentid = %s", (commentId,))
+                ps_cursor.execute("DELETE FROM user_comments WHERE commentid = %s", (commentId,))
                 conn.commit()
                 ps_cursor.close()
                 return f"Comment with ID {commentId} deleted successfully"
@@ -223,7 +221,7 @@ class Repository():
                 # like the comment
                 ps_cursor.execute("INSERT INTO comment_like(eventid, commentid, userid) VALUES (%s, %s, %s)",
                                     (eventId, data['commentId'], userId))
-                ps_cursor.execute("UPDATE comments SET likes = likes + 1 WHERE commentid = %s", (data['commentId'],))
+                ps_cursor.execute("UPDATE user_comments SET likes = likes + 1 WHERE commentid = %s", (data['commentId'],))
                 conn.commit()
                 ps_cursor.close()
                 return f"Comment is liked successfully"
@@ -231,7 +229,7 @@ class Repository():
                 # unlike the comment
                 ps_cursor.execute("DELETE FROM comment_like WHERE commentid = %s AND userid = %s",
                                     (data['commentId'], userId))
-                ps_cursor.execute("UPDATE comments SET likes = likes - 1 WHERE commentid = %s", (data['commentId'],))
+                ps_cursor.execute("UPDATE user_comments SET likes = likes - 1 WHERE commentid = %s", (data['commentId'],))
                 conn.commit()
                 ps_cursor.close()
                 return f"Comment is unliked successfully"
