@@ -1,7 +1,7 @@
 
 from datetime import date
 from datetime import datetime
-from models import EventModel, CommentModel, EventLikeModel, CommentLikeModel, UserModel
+from models import EventModel, CommentModel, EventLikeModel, CommentLikeModel, UserModel, CommentUserModel
 from flask import current_app, g
 
 
@@ -168,3 +168,70 @@ class Repository():
             conn.commit()
             ps_cursor.close()
             return "User added successfully"
+
+    def comments_get_all(self, eventId):
+        conn = self.get_db()
+        if (conn):
+            ps_cursor = conn.cursor()
+            ps_cursor.execute("SELECT * FROM user_comments uc JOIN users u ON uc.userid = u.userid WHERE uc.eventid = %s ORDER BY timestamp DESC", (eventId,))
+            comment_records = ps_cursor.fetchall()
+            comment_list = []
+            for row in comment_records:
+                comment_user_model = CommentUserModel(row[0], row[1], row[2], row[3].isoformat(), row[4], row[5], row[8], row[9])
+                print(comment_user_model.__dict__)
+                comment_list.append(comment_user_model)
+            ps_cursor.close()
+            return comment_list
+
+    def comment_add(self, eventId, data, userId):
+        conn = self.get_db()
+        if (conn):
+            ps_cursor = conn.cursor()
+            timestamp = datetime.now()
+            ps_cursor.execute(
+                "INSERT INTO user_comments(eventid, content, timestamp, userid, likes) VALUES (%s, %s, %s, %s, %s) RETURNING commentid",
+                (eventId, data['content'], timestamp, userId, 0))
+            conn.commit()
+            comment_id = ps_cursor.fetchone()[0]
+            ps_cursor.close()
+            comment = CommentModel(comment_id, eventId, data['content'], timestamp.isoformat(), userId, 0)
+            return comment
+
+    def comment_delete(self, commentId, userId):
+        conn = self.get_db()
+        if conn:
+            ps_cursor = conn.cursor()
+            ps_cursor.execute("SELECT userid FROM user_comments WHERE commentid = %s", (commentId,))
+            comment_creator_id = ps_cursor.fetchone()
+
+            if comment_creator_id is not None and comment_creator_id[0] == userId:
+                ps_cursor.execute("DELETE FROM user_comments WHERE commentid = %s", (commentId,))
+                conn.commit()
+                ps_cursor.close()
+                return f"Comment with ID {commentId} deleted successfully"
+            else:
+                return f"Comment with ID {commentId} cannot be deleted because you are not the creator"
+
+    def comment_like_and_unlike(self, eventId, data, userId):
+        conn = self.get_db()
+        if conn:
+            ps_cursor = conn.cursor()
+            ps_cursor.execute("SELECT commentid FROM comment_like WHERE commentid = %s AND userid = %s",
+                                (data['commentId'], userId))
+            liked_comment = ps_cursor.fetchone()
+            if liked_comment is None:
+                # like the comment
+                ps_cursor.execute("INSERT INTO comment_like(eventid, commentid, userid) VALUES (%s, %s, %s)",
+                                    (eventId, data['commentId'], userId))
+                ps_cursor.execute("UPDATE user_comments SET likes = likes + 1 WHERE commentid = %s", (data['commentId'],))
+                conn.commit()
+                ps_cursor.close()
+                return f"Comment is liked successfully"
+            else:
+                # unlike the comment
+                ps_cursor.execute("DELETE FROM comment_like WHERE commentid = %s AND userid = %s",
+                                    (data['commentId'], userId))
+                ps_cursor.execute("UPDATE user_comments SET likes = likes - 1 WHERE commentid = %s", (data['commentId'],))
+                conn.commit()
+                ps_cursor.close()
+                return f"Comment is unliked successfully"
