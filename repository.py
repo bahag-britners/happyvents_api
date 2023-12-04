@@ -1,7 +1,7 @@
 
 from datetime import date
 from datetime import datetime
-from models import EventModel, CommentModel, EventLikeModel, CommentLikeModel, UserModel
+from models import EventModel, CommentModel, EventLikeModel, CommentLikeModel, UserModel, CommentUserModel
 from flask import current_app, g
 
 
@@ -173,11 +173,13 @@ class Repository():
         conn = self.get_db()
         if (conn):
             ps_cursor = conn.cursor()
-            ps_cursor.execute("SELECT * FROM user_comments WHERE eventid = %s ORDER BY timestamp", (eventId,))
+            ps_cursor.execute("SELECT * FROM user_comments uc JOIN users u ON uc.userid = u.userid WHERE uc.eventid = %s ORDER BY timestamp DESC", (eventId,))
             comment_records = ps_cursor.fetchall()
             comment_list = []
             for row in comment_records:
-                comment_list.append(CommentModel(row[0], row[1], row[2], row[3].isoformat(), row[4], row[5]))
+                comment_user_model = CommentUserModel(row[0], row[1], row[2], row[3].isoformat(), row[4], row[5], row[8], row[9])
+                print(comment_user_model.__dict__)
+                comment_list.append(comment_user_model)
             ps_cursor.close()
             return comment_list
 

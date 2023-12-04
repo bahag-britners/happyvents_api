@@ -21,6 +21,13 @@ class CommentModel:
         self.likes = likes
 
 
+class CommentUserModel(CommentModel):
+    def __init__(self, commentId, eventId, content, timestamp, likes, userId, userImage, userName):
+        super().__init__(commentId, eventId, content, timestamp, likes, userId)
+        self.userImage = userImage
+        self.userName = userName
+
+
 class EventLikeModel:
     def __init__(self, eventId, userId):
         self.eventId = eventId
