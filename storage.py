@@ -1,6 +1,5 @@
 import os
 from google.cloud import storage
-project_id = os.getenv('GOOGLE_CLOUD_PROJECT')
 bucket_name = os.getenv('GOOGLE_CLOUD_BUCKET')
 
 storage_client = storage.Client()
