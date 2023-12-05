@@ -1,6 +1,7 @@
 
 from datetime import date
 from datetime import datetime
+import json
 from models import EventModel, CommentModel, EventLikeModel, CommentLikeModel, UserModel, CommentUserModel
 from flask import current_app, g
 
@@ -84,18 +85,19 @@ class Repository():
             return event_list
             
     # need to test after adding the event
-    def event_add(self, data, userId):
+    def event_add(self, dataStr, userId, image_url):
+        data = json.loads(dataStr)
         conn = self.get_db()
         if (conn):
             ps_cursor = conn.cursor()
             ps_cursor.execute(
                 "INSERT INTO events(title, description, address, image, event_date, likes, price, userid) VALUES (%s, %s, %s,%s, %s, %s, %s, %s) RETURNING eventid",
-                (data['title'], data['description'], data['address'], '', datetime.strptime(data['event_date'], "%Y-%m-%d"), 0, data['price'], userId))
+                (data['title'], data['description'], data['address'], image_url, datetime.strptime(data['event_date'], "%Y-%m-%d"), 0, data['price'], userId))
             
             conn.commit()
             id = ps_cursor.fetchone()[0]
             ps_cursor.close()
-            event = EventModel(id, data['title'], data['description'], data['address'], '', data['event_date'], 0, data['price'])
+            event = EventModel(id, data['title'], data['description'], data['address'], image_url, data['event_date'], 0, data['price'])
             return event
                             
     def event_update(self, data, userId):
