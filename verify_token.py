@@ -12,7 +12,6 @@ def retrieve_user(req):
     if token is None:
         return None
     token = token.replace('Bearer ', '')
-    print(token, 'token after split')
     try:
         decoded_token = auth.verify_id_token(token)
         print(decoded_token, 'decoded token')

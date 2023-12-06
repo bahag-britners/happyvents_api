@@ -4,3 +4,4 @@ pytest
 werkzeug==2.0.2
 psycopg2-binary
 firebase-admin
+Pillow==8.3.1
