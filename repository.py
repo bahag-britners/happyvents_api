@@ -2,7 +2,7 @@
 from datetime import date
 from datetime import datetime
 import json
-from models import EventModel, CommentModel, EventLikeModel, CommentLikeModel, UserModel, CommentUserModel
+from models import EventModel, CommentModel, EventLikeModel, CommentLikeModel, UserModel, CommentUserModel, EventUserModel
 from flask import current_app, g
 
 
@@ -16,7 +16,7 @@ class Repository():
         conn = self.get_db()
         if (conn):
             ps_cursor = conn.cursor()
-            ps_cursor.execute("select * from events order by title")
+            ps_cursor.execute("SELECT * FROM events order by title")
             event_records = ps_cursor.fetchall()
             #print(event_records)
             event_list = []
@@ -61,12 +61,12 @@ class Repository():
         conn = self.get_db()
         if conn:
             ps_cursor = conn.cursor()
-            ps_cursor.execute("select * FROM events WHERE eventid = %s", (id,))
+            ps_cursor.execute("SELECT * FROM events e JOIN users u ON e.userid = u.userid WHERE e.eventid = %s", (id,))
             event_record = ps_cursor.fetchone()
             ps_cursor.close()
         
         if event_record:
-            event = EventModel(event_record[0], event_record[1], event_record[2], event_record[3], event_record[4], event_record[5].isoformat(), event_record[6], event_record[7], event_record[8])
+            event = EventUserModel(event_record[0], event_record[1], event_record[2], event_record[3], event_record[4], event_record[5].isoformat(), event_record[6], event_record[7], event_record[8], event_record[11], event_record[12])
             return event
         else:
             return None
