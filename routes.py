@@ -2,6 +2,7 @@ from flask_restful import Resource
 from models import EventModel
 from repository import Repository
 from flask import request
+import storage
 
 from verify_token import retrieve_user
 
@@ -64,25 +65,32 @@ class Event(Resource):
     
 
     def post(self, req=request):
-        data = req.get_json()
         user = retrieve_user(req)
+        image = req.files.get('image')
+        event = req.form.get('event')
         if user is None:
             return {'error': 'Unauthorized'}, 401
         else:
-            return self.repo.event_add(data, user.userId).__dict__
+            if image is not None:
+                image_url = storage.upload_file(image, True)
+            else:
+                image_url = ''
+            return self.repo.event_add(event, user.userId, image_url).__dict__
 
 
     def put(self, req=request):
-        data = req.get_json()
         user = retrieve_user(req)
+        image = req.files.get('image')
+        event = req.form.get('event')
         if user is None:
             return {'error': 'Unauthorized'}, 401
         else:
-            val = self.repo.event_update(data, user.userId)
-            if isinstance(val, EventModel):
-                return val.__dict__
+            if image is not None:
+                image_url = storage.upload_file(image, True)
             else:
-                return val
+                image_url = ''
+            val = self.repo.event_update(event, user.userId, image_url)
+            return val.__dict__ if isinstance(val, EventModel) else val
     
     
     def delete(self, event_id, req=request):

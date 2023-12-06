@@ -1,7 +1,8 @@
 
 from datetime import date
 from datetime import datetime
-from models import EventModel, CommentModel, EventLikeModel, CommentLikeModel, UserModel, CommentUserModel
+import json
+from models import EventModel, CommentModel, EventLikeModel, CommentLikeModel, UserModel, CommentUserModel, EventUserModel
 from flask import current_app, g
 
 
@@ -15,7 +16,7 @@ class Repository():
         conn = self.get_db()
         if (conn):
             ps_cursor = conn.cursor()
-            ps_cursor.execute("select * from events order by title")
+            ps_cursor.execute("SELECT * FROM events order by title")
             event_records = ps_cursor.fetchall()
             #print(event_records)
             event_list = []
@@ -60,12 +61,12 @@ class Repository():
         conn = self.get_db()
         if conn:
             ps_cursor = conn.cursor()
-            ps_cursor.execute("select * FROM events WHERE eventid = %s", (id,))
+            ps_cursor.execute("SELECT * FROM events e JOIN users u ON e.userid = u.userid WHERE e.eventid = %s", (id,))
             event_record = ps_cursor.fetchone()
             ps_cursor.close()
         
         if event_record:
-            event = EventModel(event_record[0], event_record[1], event_record[2], event_record[3], event_record[4], event_record[5].isoformat(), event_record[6], event_record[7], event_record[8])
+            event = EventUserModel(event_record[0], event_record[1], event_record[2], event_record[3], event_record[4], event_record[5].isoformat(), event_record[6], event_record[7], event_record[8], event_record[11], event_record[12])
             return event
         else:
             return None
@@ -84,38 +85,40 @@ class Repository():
             return event_list
             
     # need to test after adding the event
-    def event_add(self, data, userId):
+    def event_add(self, dataStr, userId, image_url):
+        data = json.loads(dataStr)
         conn = self.get_db()
         if (conn):
             ps_cursor = conn.cursor()
             ps_cursor.execute(
                 "INSERT INTO events(title, description, address, image, event_date, likes, price, userid) VALUES (%s, %s, %s,%s, %s, %s, %s, %s) RETURNING eventid",
-                (data['title'], data['description'], data['address'], '', datetime.strptime(data['event_date'], "%Y-%m-%d"), 0, data['price'], userId))
+                (data['title'], data['description'], data['address'], image_url, datetime.strptime(data['event_date'], "%Y-%m-%d"), 0, data['price'], userId))
             
             conn.commit()
             id = ps_cursor.fetchone()[0]
             ps_cursor.close()
-            event = EventModel(id, data['title'], data['description'], data['address'], '', data['event_date'], 0, data['price'])
+            event = EventModel(id, data['title'], data['description'], data['address'], image_url, data['event_date'], 0, data['price'])
             return event
                             
-    def event_update(self, data, userId):
+    def event_update(self, dataStr, userId, image_url):
+        data = json.loads(dataStr)
         conn = self.get_db()
         if conn:
             ps_cursor = conn.cursor()
             event_id = data.get('eventId')
             ps_cursor.execute("SELECT userid FROM events WHERE eventid = %s", (event_id,))
             event_creator_id = ps_cursor.fetchone()[0]
-            print("event creator id: " + event_creator_id)
-            print("userId: " + userId)
             if event_creator_id != userId:
                 ps_cursor.close()
                 return {'error': 'You are not allowed to do this!'}, 401
             else:
-                ps_cursor.execute("UPDATE events SET title= %s, description=%s, address=%s, event_date=%s, price=%s WHERE eventid = %s",
-                            (data.get('title'), data.get('description'), data.get('address'), datetime.strptime(data.get('event_date'), "%Y-%m-%d"), data.get('price'), event_id))
+                if image_url == '':
+                   image_url = data.get('image')
+                ps_cursor.execute("UPDATE events SET title= %s, description=%s, address=%s, image=%s, event_date=%s, price=%s WHERE eventid = %s",
+                            (data.get('title'), data.get('description'), data.get('address'), image_url, datetime.strptime(data.get('event_date'), "%Y-%m-%d"), data.get('price'), event_id))
                 conn.commit()
                 ps_cursor.close()
-                return EventModel(event_id, data['title'], data['description'], data['address'], data['image'], data['event_date'], data['likes'], data['price'])
+                return EventModel(event_id, data['title'], data['description'], data['address'], image_url, data['event_date'], data['likes'], data['price'])
 
     def event_delete(self, eventId, userId):
         conn = self.get_db()

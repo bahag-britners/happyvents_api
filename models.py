@@ -10,6 +10,12 @@ class EventModel:
         self.price = price
         self.userId = userId
 
+class EventUserModel(EventModel):
+    def __init__(self, eventId, title, description, address, image, event_date, likes, price, userId = "user_id", userImage = "user_image", userName = "user_name"):
+        super().__init__(eventId, title, description, address, image, event_date, likes, price, userId)
+        self.userImage = userImage
+        self.userName = userName
+
 
 class CommentModel:
     def __init__(self, commentId, eventId, content, timestamp, likes, userId):
