@@ -191,14 +191,15 @@ class Repository():
         conn = self.get_db()
         if (conn):
             ps_cursor = conn.cursor()
-            timestamp = datetime.now()
             ps_cursor.execute(
-                "INSERT INTO user_comments(eventid, content, timestamp, userid, likes) VALUES (%s, %s, %s, %s, %s) RETURNING commentid",
-                (eventId, data['content'], timestamp, userId, 0))
+                "INSERT INTO user_comments(eventid, content, userid, likes) VALUES (%s, %s, %s, %s) RETURNING commentid, timestamp",
+                (eventId, data['content'], userId, 0))
             conn.commit()
-            comment_id = ps_cursor.fetchone()[0]
-            ps_cursor.close()
+            comment = ps_cursor.fetchone()
+            comment_id = comment[0]
+            timestamp = comment[1]
             comment = CommentModel(comment_id, eventId, data['content'], timestamp.isoformat(), userId, 0)
+            ps_cursor.close()
             return comment
 
     def comment_delete(self, commentId, userId):
