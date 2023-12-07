@@ -88,7 +88,8 @@ class Repository():
     def event_add(self, dataStr, userId, image_url):
         data = json.loads(dataStr)
         conn = self.get_db()
-        data['price'] = data['price'] if data['price'] != '' else 0
+        if data['price'] == '':
+            data['price'] = 0
         if (conn):
             ps_cursor = conn.cursor()
             ps_cursor.execute(
