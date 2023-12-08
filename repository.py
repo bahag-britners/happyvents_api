@@ -16,7 +16,7 @@ class Repository():
         conn = self.get_db()
         if (conn):
             ps_cursor = conn.cursor()
-            ps_cursor.execute("SELECT * FROM events order by title")
+            ps_cursor.execute("SELECT * FROM events ORDER BY eventid DESC")
             event_records = ps_cursor.fetchall()
             #print(event_records)
             event_list = []
@@ -88,7 +88,8 @@ class Repository():
     def event_add(self, dataStr, userId, image_url):
         data = json.loads(dataStr)
         conn = self.get_db()
-        data['price'] = data['price'] if data['price'] != '' else 0
+        if data['price'] == '' or data['price'] == None:
+            data['price'] = 0
         if (conn):
             ps_cursor = conn.cursor()
             ps_cursor.execute(
@@ -103,6 +104,8 @@ class Repository():
                             
     def event_update(self, dataStr, userId, image_url):
         data = json.loads(dataStr)
+        if data['price'] == '' or data['price'] == None:
+            data['price'] = 0
         conn = self.get_db()
         if conn:
             ps_cursor = conn.cursor()
